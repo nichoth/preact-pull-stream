@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "budo example/index.js --live -- -t [ babelify --presets es2015 ]"
+    "dev": "budo example/index.js --live -- -t babelify"
   },
   "dependencies": {
     "preact": "^8.2.5",
