@@ -7,6 +7,7 @@ var ViewStream = require('../')
 
 var View = ViewStream(['foo', 'bar'], function myView (props) {
     console.log('render', props)
+    if (
     return <div>
         hello {props.hurray}
         <br />

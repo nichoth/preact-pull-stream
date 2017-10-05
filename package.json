@@ -7,15 +7,19 @@
     "example": "example"
   },
   "scripts": {
-    "dev": "budo example/index.js --live -- -t babelify"
+    "postversion": "git push && git push --tags && npm publish",
+    "dev": "budo example/index.js --live -- -t babelify",
+    "test": "browserify example/index.js -t babelify | tape-run"
   },
   "dependencies": {
-    "preact": "^8.2.5",
     "pull-abortable": "^4.1.1",
     "pull-notify": "^0.1.1",
     "pull-stream": "^3.6.1",
     "pull-stream-util": "https://github.com/nichoth/pull-stream-util/tarball/master",
     "xtend": "^4.0.1"
+  },
+  "peerDependencies": {
+    "preact": "^8.2.5"
   },
   "devDependencies": {
     "babel-plugin-transform-react-jsx": "^6.24.1",
@@ -25,8 +29,11 @@
     "budo": "^10.0.4",
     "eslint": "^4.8.0",
     "eslint-config-minlint": "^2.0.0",
+    "preact": "^8.2.5",
     "pull-cat": "^1.1.11",
-    "pull-scan": "^1.0.0"
+    "pull-scan": "^1.0.0",
+    "tape": "^4.8.0",
+    "tape-run": "^3.0.0"
   },
   "repository": {
     "type": "git",
