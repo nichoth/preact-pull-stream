@@ -1,4 +1,11 @@
 {
+  "name": "preact-pull-stream",
+  "description": "Create a duplex stream from a preact component",
+  "version": "0.0.0",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
   "scripts": {
     "dev": "budo example/index.js --live -- -t babelify"
   },
@@ -20,5 +27,21 @@
     "eslint-config-minlint": "^2.0.0",
     "pull-cat": "^1.1.11",
     "pull-scan": "^1.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nichoth/preact-pull-stream.git"
+  },
+  "keywords": [
+    "preact",
+    "pull",
+    "stream",
+    "pull-stream"
+  ],
+  "author": "nichoth",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nichoth/preact-pull-stream/issues"
+  },
+  "homepage": "https://github.com/nichoth/preact-pull-stream#readme"
 }
