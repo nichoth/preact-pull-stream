@@ -47,7 +47,7 @@ function PreactStream (evNames, view) {
 
             return h(
                 view,
-                xtend({ events: emitters }, props, state),
+                xtend(props, { events: emitters, state: state }),
                 props.children
             )
         }
