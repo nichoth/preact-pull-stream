@@ -3,9 +3,7 @@ var xtend = require('xtend')
 var S = require('pull-stream')
 var scan = require('pull-scan')
 var cat = require('pull-cat')
-var ViewStream = require('../index')
-
-console.log(require('preact'))
+var ViewStream = require('../dist')
 
 var View = ViewStream(['foo', 'bar'], function myView (props) {
     console.log('render', props)
