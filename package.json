@@ -9,7 +9,7 @@
   "scripts": {
     "prepublish": "npm run build",
     "postversion": "git push && git push --tags && npm publish",
-    "build": "browserify -t babelify --standalone > dist/index.js",
+    "build": "browserify -t babelify --standalone preactPullStream > dist/index.js",
     "dev": "budo example/index.js --live -- -t babelify",
     "test": "browserify example/index.js -t babelify | tape-run"
   },
