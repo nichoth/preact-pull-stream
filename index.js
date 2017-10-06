@@ -1,4 +1,6 @@
-import { h, Component } from 'preact'
+var Preact = require('preact')
+var h = Preact.h
+var Component = Preact.Component
 var xtend = require('xtend')
 var S = require('pull-stream/pull')
 var Drain = require('pull-stream/sinks/drain')

@@ -15,7 +15,7 @@
     "pull-abortable": "^4.1.1",
     "pull-notify": "^0.1.1",
     "pull-stream": "^3.6.1",
-    "pull-stream-util": "https://github.com/nichoth/pull-stream-util/tarball/master",
+    "pull-stream-util": "0.0.0",
     "xtend": "^4.0.1"
   },
   "peerDependencies": {

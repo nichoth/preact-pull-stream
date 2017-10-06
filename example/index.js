@@ -1,13 +1,14 @@
-import { h, render } from 'preact'
+var { h, render } = require('preact')
 var xtend = require('xtend')
 var S = require('pull-stream')
 var scan = require('pull-scan')
 var cat = require('pull-cat')
 var ViewStream = require('../')
 
+console.log(require('preact'))
+
 var View = ViewStream(['foo', 'bar'], function myView (props) {
     console.log('render', props)
-    if (
     return <div>
         hello {props.hurray}
         <br />
