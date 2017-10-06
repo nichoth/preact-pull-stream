@@ -2,7 +2,7 @@
   "name": "preact-pull-stream",
   "description": "Create a duplex stream from a preact component",
   "version": "0.0.6",
-  "main": "dist/index.js",
+  "main": "index.js",
   "directories": {
     "example": "example"
   },
