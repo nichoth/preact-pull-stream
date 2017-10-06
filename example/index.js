@@ -3,18 +3,16 @@ var xtend = require('xtend')
 var S = require('pull-stream')
 var scan = require('pull-scan')
 var cat = require('pull-cat')
-var ViewStream = require('../dist')
+var ViewStream = require('../')
 
 var View = ViewStream(['foo', 'bar'], function myView (props) {
     console.log('render', props)
     return <div>
-        hello {props.hurray}
+        hello {props.state.hurray}
         <br />
         <button onClick={props.events.foo}>foo click</button>
     </div>
 })
-
-render(<View.view />, document.body)
 
 var strings = [ 'ham', 'string', 'world' ]
 var initState = { hurray: 'hurray' }
@@ -34,5 +32,5 @@ S(
     View.sink
 )
 
-
+render(<View.view />, document.body)
 

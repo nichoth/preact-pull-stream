@@ -5,6 +5,7 @@ var xtend = require('xtend')
 var S = require('pull-stream/pull')
 var Drain = require('pull-stream/sinks/drain')
 var Notify = require('pull-notify')
+var Pushable = require('pull-pushable')
 var Abortable = require('pull-abortable')
 var mux = require('pull-stream-util/mux')
 
@@ -15,7 +16,7 @@ function PreactStream (evNames, view) {
         return acc
     }, {})
 
-    var state = Notify()
+    var state = Pushable()
     var abortable = Abortable()
 
     class ViewStream extends Component {
@@ -23,7 +24,7 @@ function PreactStream (evNames, view) {
         componentDidMount() {
             var self = this
             S(
-                state.listen(),
+                state,
                 abortable,
                 Drain(function onUpdate (state) {
                     self.setState(state)
@@ -67,7 +68,7 @@ function PreactStream (evNames, view) {
     return {
         sources: Sources,
         sink: Drain(function onEvent (ev) {
-            state(ev)
+            state.push(ev)
         }, function onEnd (err) {
             if (err) throw err
         }),
