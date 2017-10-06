@@ -3,7 +3,7 @@ var xtend = require('xtend')
 var S = require('pull-stream')
 var scan = require('pull-scan')
 var cat = require('pull-cat')
-var ViewStream = require('../')
+var ViewStream = require('../index')
 
 console.log(require('preact'))
 
