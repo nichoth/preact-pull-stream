@@ -29,6 +29,11 @@ function PreactStream (evNames, view) {
 
 
     class ViewStream extends Component {
+        constructor() {
+            super()
+            this.state = lastState
+        }
+
         componentDidMount() {
             var self = this
             S(
