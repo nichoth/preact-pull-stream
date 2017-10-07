@@ -16,11 +16,19 @@ function PreactStream (evNames, view) {
         return acc
     }, {})
 
+    var lastState
     var state = Pushable()
     var abortable = Abortable()
 
-    class ViewStream extends Component {
+    var emitters = Object.keys(sources).reduce(function (acc, k) {
+        acc[k] = function (data) {
+            sources[k](data)
+        }
+        return acc
+    }, {})
 
+
+    class ViewStream extends Component {
         componentDidMount() {
             var self = this
             S(
@@ -39,13 +47,6 @@ function PreactStream (evNames, view) {
         }
 
         render(props, state) {
-            var emitters = Object.keys(sources).reduce(function (acc, k) {
-                acc[k] = function (data) {
-                    sources[k](data)
-                }
-                return acc
-            }, {})
-
             return h(
                 view,
                 xtend(props, { events: emitters, state: state }),
@@ -68,6 +69,7 @@ function PreactStream (evNames, view) {
     return {
         sources: Sources,
         sink: Drain(function onEvent (ev) {
+            lastState = ev
             state.push(ev)
         }, function onEnd (err) {
             if (err) throw err
