@@ -7,38 +7,39 @@ var Drain = require('pull-stream/sinks/drain')
 var Notify = require('pull-notify')
 var Pushable = require('pull-pushable')
 var Abortable = require('pull-abortable')
-var mux = require('pull-stream-util/mux')
 
-function PreactStream (evNames, view) {
-    var sources = evNames.reduce(function (acc, name) {
-        var notify = Notify()
-        acc[name] = notify
-        return acc
-    }, {})
+function PreactStream (view, initState) {
+    // @TODO should probably get rid of this and make a simple
+    // pub/sub thing
+    var pushable = Pushable()
+    var abortable$ = Abortable()
+    var notify = Notify()
 
-    var lastState
-    var state = Pushable()
-    var abortable = Abortable()
-
-    var emitters = Object.keys(sources).reduce(function (acc, k) {
-        acc[k] = function (data) {
-            sources[k](data)
+    // memoize these emitter functions
+    var emitFns = {}
+    function emit (type, data) {
+        if (data === undefined) {
+            emitFns[type] = emitFns[type] || function (data) {
+                notify([type, data])
+            }
+            return emitFns[type]
         }
-        return acc
-    }, {})
 
+        notify([type, data])
+    }
 
     class ViewStream extends Component {
         constructor() {
             super()
-            this.state = lastState
+            this.state = initState
         }
 
         componentDidMount() {
             var self = this
+
             S(
-                state,
-                abortable,
+                pushable,
+                abortable$,
                 Drain(function onUpdate (state) {
                     self.setState(state)
                 }, function onEnd (err) {
@@ -48,39 +49,28 @@ function PreactStream (evNames, view) {
         }
 
         componentWillUnmount() {
-            abortable.abort()
+            abortable$.abort()
         }
 
         render(props, state) {
             return h(
                 view,
-                xtend(props, { events: emitters, state: state }),
+                xtend(props, state, {
+                    emit: emit,
+                }),
                 props.children
             )
         }
     }
 
-    function Sources () {
-        return mux(Object.keys(sources).reduce(function (acc, k) {
-            acc[k] = sources[k].listen()
-            return acc
-        }, {}))
-    }
+    ViewStream.createSource = notify.listen
+    ViewStream.sink = Drain(function onEvent (ev) {
+        pushable.push(ev)
+    }, function onEnd (err) {
+        if (err) throw err
+    })
 
-    Object.keys(sources).forEach(function (k) {
-        Sources[k] = sources[k].listen
-    }, {})
-
-    return {
-        sources: Sources,
-        sink: Drain(function onEvent (ev) {
-            lastState = ev
-            state.push(ev)
-        }, function onEnd (err) {
-            if (err) throw err
-        }),
-        view: ViewStream
-    }
+    return ViewStream
 }
 
 module.exports = PreactStream

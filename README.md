@@ -1,8 +1,7 @@
 # preact pull stream
-
 Create a duplex stream from a preact component
 
-You can create a render loop with a stream interface. Events come out of the dom, then get transformed into state and sent to preact to re-render.
+This will take a preact component, and return a new component with some additional properties -- `.createSource()`, and `.sink`, so that you can easily connect a view to a pull-stream. The source produces events from the dom, and the sink consumes state objects that get passed down as props, re-rendering for each new state.
 
 ## install 
 
@@ -12,49 +11,60 @@ You can create a render loop with a stream interface. Events come out of the dom
 
 ```js
 var { h, render } = require('preact')
+var createViewStream = require('preact-pull-stream')
+var assert = require('assert')
 var xtend = require('xtend')
 var S = require('pull-stream')
 var scan = require('pull-scan')
-var cat = require('pull-cat')
-var ViewStream = require('preact-pull-stream')
 
-// define view event names foo and bar
-var View = ViewStream(['foo', 'bar'], MyView)
+var initState = { hello: 'world', n: 0 }
 
-// a preact component is exposed on `.view` field
-render(<View.view />, document.body)
+// create a duplex stream from a preact component
+var View = createViewStream(MyView, initState)
 
 function MyView (props) {
+    var { emit } = props
+
+    if (props.n === 0) {
+        process.nextTick(function () {
+            emit('foo', {
+                target: {
+                    value: 'world'
+                }
+            })
+        })
+    }
+
     return <div>
-        hello {props.hurray}
+        hello: {props.hello} {props.n}
         <br />
-        <button onClick={props.events.foo}>foo click</button>
+
+        {/*
+            `emit('foo')` returns a function that takes a dom event,
+            and emits events to the stream in the form [type, data], eg:
+            `['foo', <input event>]`
+
+            The curried emit functions are memoized based on type,
+            so we do not create a new function on each render
+        */}
+        <input type="text" value={props.hello} onInput={emit('foo')}
+            autofocus={true} />
     </div>
 }
 
-var strings = [ 'ham', 'string', 'world' ]
-var initState = { hurray: 'hurray' }
-
-S(
-    cat([
-        S.once(initState),
-        S(
-
-            // create a stream of foo events
-            View.sources.foo(),
-
-            // create a state object that gets sent back to the view
-            scan((prev, n) => prev === 2 ? 0 : prev + 1, 0),
-            S.map(n => strings[n]),
-            scan(function (state, string) {
-                return xtend(state, { hurray: string })
-            }, initState),
-         )
-    ]),
-
-    // all state changes are consumed by a single sink
-    View.sink
+// transform view events into new states
+var states$ = S(
+    View.createSource(),
+    scan((state, [type, ev]) => {
+        assert.equal(type, 'foo')
+        return { hello: ev.target.value, n: state.n + 1 }
+    }, initState)
 )
+
+// View.sink will re-render on each event in the stream
+S( states$, View.sink )
+
+render(<View />, document.body)
 ```
 
 

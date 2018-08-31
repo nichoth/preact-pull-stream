@@ -1,5 +1,5 @@
 var { h, render } = require('preact')
-var assert = require('assert')
+var test = require('tape')
 var xtend = require('xtend')
 var S = require('pull-stream')
 var scan = require('pull-scan')
@@ -11,14 +11,13 @@ var initState = { hello: 'world', n: 0 }
 var View = createViewStream(MyView, initState)
 
 function MyView (props) {
-    console.log('render', props)
     var { emit } = props
 
     if (props.n === 0) {
         process.nextTick(function () {
             emit('foo', {
                 target: {
-                    value: 'world'
+                    value: 'foo'
                 }
             })
         })
@@ -32,20 +31,22 @@ function MyView (props) {
     </div>
 }
 
-// transform view events into new states
-var states$ = S(
-    View.createSource(),
-    scan((state, [type, ev]) => {
-        assert.equal(type, 'foo')
-        return { hello: ev.target.value, n: state.n + 1 }
-    }, initState)
-)
+test('preact stream', function (t) {
+    t.plan(2)
 
-// View.sink will re-render on each event in the stream
-S(
-    states$,
-    View.sink
-)
+    // transform view events into new states
+    var states$ = S(
+        View.createSource(),
+        scan((state, [type, ev]) => {
+            t.equal(type, 'foo')
+            t.equal(ev.target.value, 'foo')
+            return { hello: ev.target.value, n: state.n + 1 }
+        }, initState)
+    )
 
-render(<View />, document.body)
+    // View.sink will re-render on each event in the stream
+    S( states$, View.sink )
+
+    render(<View />, document.body)
+})
 
