@@ -27,7 +27,7 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "babelify": "^10.0.0",
-    "budo": "^10.0.4",
+    "budo": "^11.8.4",
     "eslint": "^8.35.0",
     "eslint-config-minlint": "^2.0.0",
     "preact": "^8.2.5",
