@@ -34,7 +34,7 @@
     "pull-cat": "^1.1.11",
     "pull-scan": "^1.0.0",
     "tape": "^4.8.0",
-    "tape-run": "^3.0.0"
+    "tape-run": "^10.0.0"
   },
   "repository": {
     "type": "git",
